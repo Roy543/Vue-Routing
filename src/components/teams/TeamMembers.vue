@@ -18,7 +18,7 @@ import UserItem from '../users/UserItem.vue';
 export default {
   inject: ['users', 'teams'],
   components: {
-    UserItem
+    UserItem,
   },
   data() {
     return {
@@ -26,18 +26,28 @@ export default {
       members: [],
     };
   },
-  created(){
-    const teamId = this.$route.params.teamID;
-    const selectedTeam = this.teams.find(team => teamId === team.id);
-    const members = selectedTeam.members;
-    const selectedMembers = [];
-    for(const member of members){
-      const selectedUser = this.users.find(user => user.id === member);
-      selectedMembers.push(selectedUser);
-    }
-    this.members = selectedMembers;
-    this.teamName = selectedTeam.name;
-  }
+  methods: {
+    loadTeamMembers(route) {
+      const teamId = route.params.teamID;
+      const selectedTeam = this.teams.find((team) => teamId === team.id);
+      const members = selectedTeam.members;
+      const selectedMembers = [];
+      for (const member of members) {
+        const selectedUser = this.users.find((user) => user.id === member);
+        selectedMembers.push(selectedUser);
+      }
+      this.members = selectedMembers;
+      this.teamName = selectedTeam.name;
+    },
+  },
+  created() {
+    this.loadTeamMembers(this.$route);
+  },
+  watch: {
+    $route(newRoute) {
+      this.loadTeamMembers(newRoute);
+    },
+  },
 };
 </script>
 
